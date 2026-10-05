@@ -33,9 +33,6 @@ export const site = {
 };
 
 export const hero = {
-  // No longer shown on the page; used for the link-preview image's text.
-  oneLiner:
-    "Junior at NYU studying Business Technology Management. Builder from Cebu, Philippines, based in New York.",
   // Portraits beside the globe, in /public/photos. `position` picks the crop and
   // `zoom` (optional) moves in on that spot, for shots taken from farther back.
   photos: [
