@@ -1,26 +1,191 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Light: paper white, ink black. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #ffffff;
+  --fg: #0a0a0a;
+  --muted: #5f5f5f;
+  --line: #e4e4e4;
+  --surface: #f5f5f5;
+  --tray: #ececec;
+  --tray-active: #ffffff;
+  --accent: #1e3fae; /* dark blue: name hover + globe nodes */
+  --page: #ffffff; /* the page color, even inside .paper (which resets --bg) */
+  color-scheme: light;
+}
+
+/* Dark: true black with soft white type, so it reads as night, not a negative. */
+.dark {
+  --bg: #000000;
+  --fg: #f2f2f2;
+  --muted: #9a9a9a;
+  --line: #222222;
+  --surface: #0e0e0e;
+  --tray: #161616;
+  --tray-active: #2e2e2e;
+  --accent: #3d63e0; /* a touch brighter so it still reads as blue on black */
+  --page: #000000;
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-surface: var(--surface);
+  --color-tray: var(--tray);
+  --color-tray-active: var(--tray-active);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-space-mono), ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  background: var(--bg);
+}
+
+/* No body background: the page color comes from <html>, so the fixed light layer
+   (z-index -1) can show through. clip stops full-bleed bars from adding a
+   sideways scroll without breaking the sticky header. */
+body {
+  overflow-x: clip;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  letter-spacing: -0.02em;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Active theme option is styled from the pre-paint <html data-theme-pref>,
+   so the toggle is correct on first paint, before hydration. */
+html[data-theme-pref="system"] [data-theme-option="system"],
+html[data-theme-pref="light"] [data-theme-option="light"],
+html[data-theme-pref="dark"] [data-theme-option="dark"] {
+  background: var(--tray-active);
+  color: var(--fg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Marc-style name: Space Mono set to span its container edge to edge.
+   Space Mono advances 0.612em per glyph; with -0.03em tracking that's 0.582em,
+   so font-size = width / (characters x 0.582). --chars is set from content.ts. */
+.fit-name-wrap {
+  container-type: inline-size;
+}
+.fit-name {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: calc(100cqw / (var(--chars) * 0.582));
+  letter-spacing: -0.03em;
+  line-height: 0.8;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+/* Set by FitName only while the cursor is on a letter's ink, not its whole box. */
+.fit-name.on-ink {
+  color: var(--accent);
+}
+
+/* Always-light surfaces, like the paper boarding passes: the light palette in
+   either theme. --page is left alone so cut-outs can still show the page. */
+.paper {
+  --bg: #ffffff;
+  --fg: #0a0a0a;
+  --muted: #5f5f5f;
+  --line: #e4e4e4;
+  --accent: #1e3fae;
+  color: var(--fg);
+}
+
+/* On desktop the hero globe is as big as it can be while still fitting on the
+   first screen under the name. Its usual size is capped by the height left over,
+     100svh - 64px top bar - name (0.8 line-height x font-size, where font-size is
+     the content width / 4.656, see .fit-name) - 12px gap,
+   divided by 0.965: the bottom ~3.5% of the canvas is empty margin under the disc,
+   so it may run just past the screen edge. It's then taken down to 95% for a
+   little breathing room. The figure is that plus the 50px
+   control column beside it, and never wider than its grid column (components/InteractiveGlobe.tsx). Keep in step with
+   the hero's spacing in app/page.tsx. */
+@media (min-width: 768px) {
+  .hero-globe {
+    width: calc(
+      0.95 *
+        min(
+          clamp(320px, 40vw, 560px),
+          (100svh - 76px - 0.1718 * min(100vw - 64px, 1136px)) / 0.965
+        ) +
+        50px
+    );
+    max-width: 100%;
+  }
+}
+
+/* Chart paper (components/ChartBackground.tsx): a faint navigation grid with "+"
+   marks where the lines cross, fixed behind the page. Near the mouse the same grid
+   lights up in the accent blue. The tile is a mask, so its color comes from CSS
+   and follows the theme. */
+.chart {
+  --grid: rgba(0, 0, 0, 0.11);
+  --tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M0 40.5H80M40.5 0V80' stroke='%23000' stroke-opacity='.32'/%3E%3Cpath d='M34 40.5H47M40.5 34V47' stroke='%23000'/%3E%3C/svg%3E");
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.dark .chart {
+  --grid: rgba(255, 255, 255, 0.09);
+}
+.chart-grid,
+.chart-light-grid {
+  position: absolute;
+  inset: 0;
+  -webkit-mask: var(--tile) 0 0 / 80px 80px;
+  mask: var(--tile) 0 0 / 80px 80px;
+}
+.chart-grid {
+  background: var(--grid);
+}
+/* The light: a fixed-size circle moved with transform, its grid shifted the
+   opposite way so it stays lined up with the one underneath. */
+.chart-light {
+  --size: 560px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--size);
+  height: var(--size);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  -webkit-mask: radial-gradient(closest-side, #000, rgba(0, 0, 0, 0.35) 45%, transparent);
+  mask: radial-gradient(closest-side, #000, rgba(0, 0, 0, 0.35) 45%, transparent);
+  will-change: transform;
+}
+.chart-light.on {
+  opacity: 1;
+}
+.chart-light-grid {
+  background: var(--accent);
+  opacity: 0.75;
+}
+.dark .chart-light-grid {
+  opacity: 0.8;
 }
