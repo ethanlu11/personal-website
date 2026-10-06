@@ -80,10 +80,12 @@ function IconLink({
   link,
   size,
   showLabel = false,
+  labelClassName = "text-lg font-medium",
 }: {
   link: (typeof contact.links)[number];
   size?: number;
   showLabel?: boolean;
+  labelClassName?: string;
 }) {
   const props = {
     href: link.href,
@@ -93,7 +95,7 @@ function IconLink({
   const body = (
     <>
       <SocialIcon name={link.icon} size={size} />
-      <span className={showLabel ? "text-lg font-medium" : "sr-only"}>{link.label}</span>
+      <span className={showLabel ? labelClassName : "sr-only"}>{link.label}</span>
     </>
   );
   return link.href.startsWith("mailto:") ? <a {...props}>{body}</a> : <ExternalLink {...props}>{body}</ExternalLink>;
@@ -108,9 +110,10 @@ const sections = [
   { id: "contact", label: "Connect" },
 ];
 
-// The About sign-off lists profiles (not the resume) as icons, then the email address.
+// The About sign-off lists profiles as icons, then the email address, then the resume.
 const findMe = contact.links.filter((l) => l.icon !== "resume" && l.icon !== "email");
 const email = contact.links.find((l) => l.icon === "email");
+const resume = contact.links.find((l) => l.icon === "resume");
 
 export default function Home() {
   return (
@@ -130,7 +133,7 @@ export default function Home() {
           <Mark size={40} />
           <span className="sr-only">{site.name}, back to top</span>
         </a>
-        <SiteNav sections={sections} resume={contact.links.find((l) => l.icon === "resume")?.href ?? "/resume.pdf"} />
+        <SiteNav sections={sections} resume={resume?.href ?? "/resume.pdf"} />
       </header>
 
       <main id="top">
@@ -182,6 +185,12 @@ export default function Home() {
                 </span>
               )}
             </p>
+            {resume && (
+              <p className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                <span>Or take a look at my</span>
+                <IconLink link={resume} size={22} showLabel labelClassName="font-medium" />
+              </p>
+            )}
           </div>
         </Section>
 
