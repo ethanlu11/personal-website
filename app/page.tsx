@@ -7,6 +7,7 @@ import Mark from "@/components/Mark";
 import OrgLogo from "@/components/OrgLogo";
 import SocialIcon from "@/components/SocialIcon";
 import FitName from "@/components/FitName";
+import HeroPhoto from "@/components/HeroPhoto";
 import InteractiveGlobe from "@/components/InteractiveGlobe";
 import ThemeCord from "@/components/ThemeCord";
 import SiteNav from "@/components/SiteNav";
@@ -141,26 +142,13 @@ export default function Home() {
               The second photo sits lower so the two read as a pair. */}
           <div className="mt-10 grid items-center gap-10 md:mt-3 md:grid-cols-[auto_minmax(0,1fr)] md:gap-8">
             <div className="flex items-start gap-3 md:translate-x-12 md:-translate-y-6 md:gap-5">
+              {/* Each portrait is the view out of an airplane window (components/HeroPhoto.tsx). */}
               {hero.photos.map((photo, i) => (
                 <div
                   key={photo.src}
-                  className={`relative aspect-[4/5] w-[min(44vw,260px)] overflow-hidden rounded-xl bg-surface md:w-[clamp(170px,19vw,240px)] ${
-                    i === 1 ? "mt-10 md:mt-16" : ""
-                  }`}
+                  className={`w-[min(44vw,260px)] md:w-[clamp(170px,19vw,240px)] ${i === 1 ? "mt-10 md:mt-16" : ""}`}
                 >
-                  <Image
-                    src={photo.src}
-                    alt={photo.alt}
-                    fill
-                    priority
-                    sizes="(min-width: 768px) 240px, 44vw"
-                    className="object-cover"
-                    style={{
-                      objectPosition: photo.position,
-                      transform: photo.zoom ? `scale(${photo.zoom})` : undefined,
-                      transformOrigin: photo.position,
-                    }}
-                  />
+                  <HeroPhoto photo={photo} index={i} />
                 </div>
               ))}
             </div>

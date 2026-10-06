@@ -33,10 +33,11 @@ export const site = {
 };
 
 export const hero = {
-  // Portraits beside the globe, in /public/photos. `position` picks the crop and
-  // `zoom` (optional) moves in on that spot, for shots taken from farther back.
+  // Portraits beside the globe, in /public/photos, shown as airplane windows.
+  // `position` picks the crop and `zoom` (optional) moves in on that spot, for
+  // shots taken from farther back.
   photos: [
-    { src: "/photos/ethan-park.jpg", alt: "Ethan Lu in a navy polo under the trees in a park", position: "50% 30%" },
+    { src: "/photos/ethan-park.jpg", alt: "Ethan Lu in a navy polo under the trees in a park", position: "50% 12%" },
     { src: "/photos/ethan-suit.jpg", alt: "Ethan Lu in a black suit by floor-to-ceiling windows", position: "50% 42%", zoom: 1.3 },
   ],
 };
