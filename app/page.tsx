@@ -187,7 +187,7 @@ export default function Home() {
             </p>
             {resume && (
               <p className="flex flex-wrap items-center gap-x-5 gap-y-2">
-                <span>Or take a look at my</span>
+                <span>Feel free to take a look at my</span>
                 <IconLink link={resume} size={22} showLabel labelClassName="font-medium" />
               </p>
             )}
