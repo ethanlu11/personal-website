@@ -13,7 +13,7 @@
   --tray-active: #ffffff;
   --accent: #1e3fae; /* dark blue: name hover + globe nodes */
   --page: #ffffff; /* the page color, even inside .paper (which resets --bg) */
-  --window-1: #f5f6f8; /* airplane window bezel, top to bottom */
+  --window-1: #f5f6f8; /* airplane window bezel, top to bottom; white in both themes */
   --window-2: #d8dce2;
   --shade-1: #f1f2f4; /* window shade */
   --shade-2: #dde1e6;
@@ -31,8 +31,6 @@
   --tray-active: #2e2e2e;
   --accent: #3d63e0; /* a touch brighter so it still reads as blue on black */
   --page: #000000;
-  --window-1: #2b2c31;
-  --window-2: #151619;
   --shade-1: #2e3035;
   --shade-2: #202226;
   color-scheme: dark;
