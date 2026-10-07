@@ -2,7 +2,7 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Light: paper white, ink black. */
+/* White (the default): paper white, ink black. */
 :root {
   --bg: #ffffff;
   --fg: #0a0a0a;
@@ -13,24 +13,39 @@
   --tray-active: #ffffff;
   --accent: #1e3fae; /* dark blue: name hover + globe nodes */
   --page: #ffffff; /* the page color, even inside .paper (which resets --bg) */
-  --window-1: #f5f6f8; /* airplane window bezel, top to bottom; white in both themes */
+  --name-shadow: rgba(0, 0, 0, 0.18);
+  --window-1: #f5f6f8; /* airplane window bezel, top to bottom; white in every theme */
   --window-2: #d8dce2;
-  --shade-1: #f1f2f4; /* window shade; white in both themes */
+  --shade-1: #f1f2f4; /* window shade; white in every theme */
   --shade-2: #dde1e6;
   color-scheme: light;
 }
 
-/* Dark: true black with soft white type, so it reads as night, not a negative. */
+/* Cream: warm off-white paper with deep brown-black ink. A light theme. */
+.cream {
+  --bg: #f5efe3;
+  --fg: #1f1a14;
+  --muted: #6e6457;
+  --line: #e1d7c5;
+  --surface: #ede5d6;
+  --tray: #e7dccb;
+  --tray-active: #fbf7ef;
+  --page: #f5efe3;
+}
+
+/* Dark gray: a charcoal page with off-white type. The one dark theme, so it's
+   what every `.dark` / `dark:` style is written against. */
 .dark {
-  --bg: #000000;
-  --fg: #f2f2f2;
-  --muted: #9a9a9a;
-  --line: #222222;
-  --surface: #0e0e0e;
-  --tray: #161616;
-  --tray-active: #2e2e2e;
-  --accent: #3d63e0; /* a touch brighter so it still reads as blue on black */
-  --page: #000000;
+  --bg: #1d1e22;
+  --fg: #eeeeef;
+  --muted: #a3a6ad;
+  --line: #33353b;
+  --surface: #25272c;
+  --tray: #2b2d33;
+  --tray-active: #3e4148;
+  --accent: #5b7ef0; /* brighter, so it still reads as blue on gray */
+  --page: #1d1e22;
+  --name-shadow: rgba(0, 0, 0, 0.55); /* deeper, to show on gray */
   color-scheme: dark;
 }
 
@@ -75,9 +90,9 @@ body {
 
 /* Active theme option is styled from the pre-paint <html data-theme-pref>,
    so the toggle is correct on first paint, before hydration. */
-html[data-theme-pref="system"] [data-theme-option="system"],
 html[data-theme-pref="light"] [data-theme-option="light"],
-html[data-theme-pref="dark"] [data-theme-option="dark"] {
+html[data-theme-pref="cream"] [data-theme-option="cream"],
+html[data-theme-pref="gray"] [data-theme-option="gray"] {
   background: var(--tray-active);
   color: var(--fg);
 }
@@ -101,6 +116,10 @@ html[data-theme-pref="dark"] [data-theme-option="dark"] {
   letter-spacing: -0.03em;
   line-height: 0.8;
   white-space: nowrap;
+  /* A soft drop shadow, scaled to the letters, so the name lifts off the page. */
+  text-shadow: 0.02em 0.035em 0.06em var(--name-shadow);
+  user-select: none;
+  -webkit-user-select: none;
   transition: color 0.3s ease;
 }
 /* Set by FitName only while the cursor is on a letter's ink, not its whole box. */
@@ -223,12 +242,28 @@ html[data-theme-pref="dark"] [data-theme-option="dark"] {
   background: linear-gradient(125deg, rgba(255, 255, 255, 0.18), transparent 38%);
   pointer-events: none;
 }
+/* --closed (set by WindowShade) is how far down the shade is pulled: 0.1 open,
+   1 shut. It follows the pointer while dragged and eases between positions
+   otherwise. */
 .plane-window-shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(var(--shade-1), var(--shade-2));
-  transform: translateY(-90%);
+  cursor: grab;
+  touch-action: none;
+  background:
+    /* faint horizontal folds */
+    repeating-linear-gradient(180deg, transparent 0 18px, rgba(0, 0, 0, 0.035) 18px 19px),
+    linear-gradient(var(--shade-1), var(--shade-2));
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+  transform: translateY(calc((var(--closed, 0.1) - 1) * 100%));
   transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.plane-window-shade[data-state="dragging"] {
+  cursor: grabbing;
+  transition: none;
+}
+.plane-window-shade:focus-visible {
+  outline-offset: -4px;
 }
 /* The shade's pull tab. */
 .plane-window-shade::after {
@@ -242,8 +277,9 @@ html[data-theme-pref="dark"] [data-theme-option="dark"] {
   background: rgba(0, 0, 0, 0.18);
   transform: translateX(-50%);
 }
-.group:hover .plane-window-shade {
-  transform: translateY(-100%);
+/* Hovering the window dips an open shade a little, a hint that it can be pulled. */
+.group:hover .plane-window-shade[data-state="open"] {
+  --closed: 0.15;
 }
 @media (prefers-reduced-motion: reduce) {
   .plane-window-shade {
@@ -261,4 +297,38 @@ html[data-theme-pref="dark"] [data-theme-option="dark"] {
 .plane-window-figure img {
   -webkit-user-drag: none;
   pointer-events: none;
+}
+
+/* Currently covers (app/page.tsx): a card with a soft shadow that, on hover or
+   keyboard focus, lifts toward you, its shadow deepening, while the artwork
+   inside scales up a touch more, so the logo seems to move forward. */
+.cover-pop {
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.12),
+    0 22px 40px -14px rgba(0, 0, 0, 0.5);
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.cover-pop-art {
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.cover-pop:hover,
+.cover-pop:focus-visible {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.1),
+    0 6px 12px rgba(0, 0, 0, 0.16),
+    0 36px 60px -18px rgba(0, 0, 0, 0.6);
+}
+.cover-pop:hover .cover-pop-art,
+.cover-pop:focus-visible .cover-pop-art {
+  transform: scale(1.08);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cover-pop,
+  .cover-pop-art {
+    transition: none;
+  }
 }

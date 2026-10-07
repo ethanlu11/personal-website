@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { playClick, warmClick } from "@/lib/click";
-import { isDark, subscribeTheme, toggleLightDark } from "@/lib/theme-client";
+import { cycleTheme, readPref, subscribeTheme, themeName } from "@/lib/theme-client";
 
 // A lamp pull cord for light/dark, after newa.sh. You have to pull it: grab the cord
 // or handle and drag down. It clicks over the moment the pull passes PULL_THRESHOLD,
@@ -156,20 +156,23 @@ export default function ThemeCord() {
       api.current.cleanup = () => clearTimeout(timer);
     }
 
-    // When the theme changes some other way (the "D" key, the footer), give the cord a tug.
-    let dark = isDark();
+    // When the theme changes some other way (the "D" key, the footer), give the cord
+    // a tug. The label always names the current theme for screen readers.
+    const label = () =>
+      hitRef.current?.setAttribute("aria-label", `Theme: ${themeName(readPref())}. Pull the cord down to change it.`);
+    let theme = readPref();
     const unsub = subscribeTheme(() => {
-      if (isDark() === dark) return;
-      dark = isDark();
+      if (readPref() === theme) return;
+      theme = readPref();
       if (!st.dragging && Math.abs(st.y - REST_Y) < 5 && !st.reduced) {
         st.springY = SNAP_Y;
         st.vy = 600;
         wake();
         wobble(true);
       }
-      hitRef.current?.setAttribute("aria-checked", String(dark));
+      label();
     });
-    hitRef.current?.setAttribute("aria-checked", String(dark));
+    label();
 
     // Switching away mid-pull (alt-tab, a system dialog) can swallow the pointerup.
     const onBlur = () => release();
@@ -186,7 +189,7 @@ export default function ThemeCord() {
 
   // Flip the theme after the cord's current frame has painted, so the page-wide
   // restyle lands in its own task instead of stalling the pull mid-drag.
-  const toggleSoon = () => requestAnimationFrame(() => setTimeout(toggleLightDark, 0));
+  const toggleSoon = () => requestAnimationFrame(() => setTimeout(cycleTheme, 0));
 
   const onPointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     const st = s.current;
@@ -285,9 +288,7 @@ export default function ThemeCord() {
       <button
         ref={hitRef}
         type="button"
-        role="switch"
-        aria-checked="false"
-        aria-label="Dark mode. Pull the cord down to switch themes."
+        aria-label="Theme: White. Pull the cord down to change it."
         title="Pull me"
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}

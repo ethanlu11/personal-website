@@ -114,20 +114,20 @@ export const experience: Role[] = [
       "Leading a 12-person team launching a decentralized event series connecting NYC startups, VCs, founders, and universities. Secured 40+ startup and VC partners and $350K+ in sponsorships toward a $1M goal.",
   },
   {
-    org: "NYU High Speed Research Network",
-    logo: logos.nyuHsrn,
-    role: "Business Analyst",
-    dates: "Dec 2025 – Present",
-    description:
-      "Built a centralized database of 1,000+ alumni and member records and piloted 4 tools that cut recruitment screening time from 3 days to 1 across 6 research departments.",
-  },
-  {
     org: "Be1Space",
     logo: logos.be1space,
     role: "Product Manager",
     dates: "Jan – May 2026",
     description:
       "Led product for a multi-campus study space finder web application, shipping an MVP in 8 weeks from 20+ student interviews across NYU, Columbia, and Fordham. University-specific filters grew monthly active usage 35% over 5 months.",
+  },
+  {
+    org: "NYU High Speed Research Network",
+    logo: logos.nyuHsrn,
+    role: "Business Analyst",
+    dates: "Dec 2025 – Present",
+    description:
+      "Built a centralized database of 1,000+ alumni and member records and piloted 4 tools that cut recruitment screening time from 3 days to 1 across 6 research departments.",
   },
   {
     org: "Jollibee Group",

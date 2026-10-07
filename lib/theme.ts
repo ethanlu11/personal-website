@@ -1,7 +1,13 @@
-export type ThemePref = "system" | "light" | "dark";
+// Three themes: white ("light", the default), cream ("cream"), and dark gray
+// ("gray"). Cream sets `.cream` for its colors; gray sets `.dark`, so every
+// dark-mode style applies to it.
+export type ThemePref = "light" | "cream" | "gray";
+
+export const THEMES: ThemePref[] = ["light", "cream", "gray"];
 
 export const THEME_STORAGE_KEY = "theme";
 
-// Runs inline in <head>, before first paint, so there's no theme flash.
-// Sets `.dark` on <html> for styling and `data-theme-pref` for the toggle.
-export const themeScript = `(function(){try{var p=localStorage.getItem("${THEME_STORAGE_KEY}");if(p!=="light"&&p!=="dark")p="system";var d=p==="dark"||(p==="system"&&matchMedia("(prefers-color-scheme: dark)").matches);var e=document.documentElement;e.classList.toggle("dark",d);e.dataset.themePref=p}catch(_){}})()`;
+// Runs inline in <head>, before first paint, so there's no theme flash. A saved
+// "dark" (the old black theme) becomes gray; anything else unknown, or no choice
+// yet, opens in white.
+export const themeScript = `(function(){try{var p=localStorage.getItem("${THEME_STORAGE_KEY}");if(p==="dark")p="gray";if(p!=="cream"&&p!=="gray")p="light";var e=document.documentElement;e.classList.toggle("cream",p==="cream");e.classList.toggle("dark",p==="gray");e.dataset.themePref=p}catch(_){}})()`;

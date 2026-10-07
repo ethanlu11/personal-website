@@ -1,4 +1,15 @@
-import { about, campusInvolvement, contact, currently, experience, globePins, hero, projects, site, type Role } from "@/content";
+import {
+  about,
+  campusInvolvement,
+  contact,
+  currently,
+  experience,
+  globePins,
+  hero,
+  projects,
+  site,
+  type Role,
+} from "@/content";
 import Image from "next/image";
 import BoardingPass from "@/components/BoardingPass";
 import ChartBackground from "@/components/ChartBackground";
@@ -11,6 +22,7 @@ import HeroPhoto from "@/components/HeroPhoto";
 import InteractiveGlobe from "@/components/InteractiveGlobe";
 import ThemeCord from "@/components/ThemeCord";
 import SiteNav from "@/components/SiteNav";
+import ShowMore from "@/components/ShowMore";
 import Tabs from "@/components/Tabs";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -45,31 +57,34 @@ function Section({
 
 // Dates on the left, then the logo, then the org in blue over the role, with a
 // short description below. A ", prev. X" role adds a quieter "Prev. X" line for the earlier role.
+// Only the first three roles show at first; "Show more" reveals the rest.
 function RoleList({ roles }: { roles: Role[] }) {
   return (
     <ol className="space-y-8 md:space-y-9">
-      {roles.map((r) => {
-        const [role, prev] = r.role.split(", prev. ");
-        return (
-          <li
-            key={`${r.org}-${r.role}`}
-            className="grid grid-cols-[48px_1fr] gap-x-4 gap-y-2 md:grid-cols-[130px_52px_1fr] md:gap-x-6"
-          >
-            <p className="col-span-2 text-sm text-muted md:col-span-1 md:pt-0.5 md:text-base md:tracking-[-0.02em]">
-              {r.dates}
-            </p>
-            <OrgLogo logo={r.logo} size={52} />
-            <div className="min-w-0">
-              <h3 className="text-lg leading-tight font-medium tracking-[-0.03em] text-accent md:text-[1.375rem]">
-                {r.org}
-              </h3>
-              <p className="mt-0.5 leading-snug md:text-[1.0625rem]">{role}</p>
-              {prev && <p className="text-sm text-muted">Prev. {prev}</p>}
-              <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-muted">{r.description}</p>
-            </div>
-          </li>
-        );
-      })}
+      <ShowMore initial={3}>
+        {roles.map((r) => {
+          const [role, prev] = r.role.split(", prev. ");
+          return (
+            <li
+              key={`${r.org}-${r.role}`}
+              className="grid grid-cols-[48px_1fr] gap-x-4 gap-y-2 md:grid-cols-[130px_52px_1fr] md:gap-x-6"
+            >
+              <p className="col-span-2 text-sm text-muted md:col-span-1 md:pt-0.5 md:text-base md:tracking-[-0.02em]">
+                {r.dates}
+              </p>
+              <OrgLogo logo={r.logo} size={52} />
+              <div className="min-w-0">
+                <h3 className="text-lg leading-tight font-medium tracking-[-0.03em] text-accent md:text-[1.375rem]">
+                  {r.org}
+                </h3>
+                <p className="mt-0.5 leading-snug md:text-[1.0625rem]">{role}</p>
+                {prev && <p className="text-sm text-muted">Prev. {prev}</p>}
+                <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-muted">{r.description}</p>
+              </div>
+            </li>
+          );
+        })}
+      </ShowMore>
     </ol>
   );
 }
@@ -217,8 +232,13 @@ export default function Home() {
           <ul className="grid gap-10 sm:grid-cols-2">
             {currently.map((item) => (
               <li key={item.org}>
-                <div
-                  className="relative flex aspect-[16/9] items-center justify-center overflow-hidden rounded-lg"
+                {/* The cover links to the first link (Instagram for GAS, the site for
+                    NYSW) and pops forward on hover: the panel lifts and the logo
+                    scales up a little more than the panel (.cover-pop in globals.css). */}
+                <ExternalLink
+                  href={item.links[0].href}
+                  aria-label={`${item.org} on ${item.links[0].label}`}
+                  className="cover-pop relative flex aspect-[16/9] items-center justify-center overflow-hidden rounded-lg"
                   style={{ background: item.cover.bg }}
                 >
                   <Image
@@ -226,7 +246,7 @@ export default function Home() {
                     alt={item.cover.logo ? "" : `${item.org} logo`}
                     fill
                     sizes="(min-width: 640px) 40vw, 100vw"
-                    className="object-cover"
+                    className="cover-pop-art object-cover"
                   />
                   {item.cover.logo && (
                     <Image
@@ -234,10 +254,10 @@ export default function Home() {
                       alt={`${item.org} logo`}
                       width={480}
                       height={84}
-                      className="relative w-1/2 object-contain"
+                      className="cover-pop-art relative w-1/2 object-contain"
                     />
                   )}
-                </div>
+                </ExternalLink>
                 <h3 className="mt-5 text-2xl font-medium tracking-[-0.03em]">{item.org}</h3>
                 <p className="mt-1 text-lg text-muted">{item.role}</p>
                 <p className="mt-2 leading-relaxed text-muted">{item.description}</p>
