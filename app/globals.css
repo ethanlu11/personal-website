@@ -21,18 +21,6 @@
   color-scheme: light;
 }
 
-/* Cream: warm off-white paper with deep brown-black ink. A light theme. */
-.cream {
-  --bg: #f5efe3;
-  --fg: #1f1a14;
-  --muted: #6e6457;
-  --line: #e1d7c5;
-  --surface: #ede5d6;
-  --tray: #e7dccb;
-  --tray-active: #fbf7ef;
-  --page: #f5efe3;
-}
-
 /* Dark gray: a charcoal page with off-white type. The one dark theme, so it's
    what every `.dark` / `dark:` style is written against. */
 .dark {
@@ -91,7 +79,6 @@ body {
 /* Active theme option is styled from the pre-paint <html data-theme-pref>,
    so the toggle is correct on first paint, before hydration. */
 html[data-theme-pref="light"] [data-theme-option="light"],
-html[data-theme-pref="cream"] [data-theme-option="cream"],
 html[data-theme-pref="gray"] [data-theme-option="gray"] {
   background: var(--tray-active);
   color: var(--fg);

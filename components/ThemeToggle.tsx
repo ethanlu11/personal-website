@@ -17,24 +17,14 @@ const options: { value: ThemePref; label: string; icon: React.ReactNode }[] = [
     ),
   },
   {
-    value: "cream",
-    label: "Use the cream theme",
-    icon: (
-      <>
-        <path d="M3 18h18M7 18a5 5 0 0 1 10 0" />
-        <path d="M12 6v3M5.64 9.64l1.41 1.41M18.36 9.64l-1.41 1.41M3 14h1.5M19.5 14H21" />
-      </>
-    ),
-  },
-  {
     value: "gray",
     label: "Use the dark gray theme",
     icon: <path d="M12 3a7 7 0 1 0 9 11 9 9 0 1 1-9-11Z" />,
   },
 ];
 
-// Footer White / Cream / Gray switch (as on newa.sh), plus the "D" shortcut,
-// which cycles through them like the cord.
+// Footer White / Gray switch (as on newa.sh), plus the "D" shortcut, which
+// toggles between them like the cord.
 export default function ThemeToggle() {
   // null on the server; the active state is painted by CSS from <html data-theme-pref>.
   const pref = useSyncExternalStore(subscribeTheme, readPref, () => null);
@@ -55,7 +45,7 @@ export default function ThemeToggle() {
   return (
     <div
       role="group"
-      aria-label="Color theme (press D to cycle)"
+      aria-label="Color theme (press D to switch)"
       className="flex w-fit items-center gap-0.5 rounded-lg bg-tray p-0.5"
     >
       {options.map((o) => (

@@ -8,7 +8,7 @@ I'm a junior at NYU studying Business Technology Management, from Cebu, Philippi
 
 - **Interactive globe**: drawn on a canvas with no libraries. A plane flies the loop over Europe and the Pacific, the globe pauses on each landing, and you can drag it, hold to speed it up, or pick a speed.
 - **Boarding-pass projects**: each project is a ticket with a route, the project's logo on the tail fin, and a tear-off stub.
-- **Pull-cord theme switch**: three themes, white (the default), cream, and dark gray. Pull the lamp cord or press <kbd>D</kbd> to cycle through them, with a click sound.
+- **Pull-cord theme switch**: white and dark gray. The site always opens in white; pull the lamp cord or press <kbd>D</kbd> to switch, with a click sound.
 - **Chart-paper background**: a faint navigation grid that lights up under the cursor.
 - **Details**: the name turns blue only when the cursor is on a letter, the nav shows where you are on the page, and Experience has Professional / Campus tabs.
 
@@ -33,7 +33,7 @@ All of the site's text and links live in **[`content.ts`](content.ts)**: the her
 ```
 app/
   page.tsx               the page: hero, sections, and footer
-  layout.tsx             fonts, metadata, and the no-flash theme script
+  layout.tsx             fonts and metadata
   globals.css            color tokens and the hand-built visual pieces
   opengraph-image.tsx    the link-preview image
   icon.svg               favicon
@@ -42,7 +42,7 @@ components/
   HeroPhoto.tsx          portraits as airplane windows
   BoardingPass.tsx       project tickets
   ThemeCord.tsx          the pull cord
-  ThemeToggle.tsx        footer White / Cream / Gray switch and the D shortcut
+  ThemeToggle.tsx        footer White / Gray switch and the D shortcut
   SiteNav.tsx            top bar with section links and breadcrumb
   ChartBackground.tsx    the grid background
   FitName.tsx            the edge-to-edge name
